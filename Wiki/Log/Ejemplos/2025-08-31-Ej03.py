@@ -38,7 +38,7 @@ lapiz = ImageDraw.Draw(imagen)
 # --- Dibujar la línea ---
 # Definimos los puntos de inicio y fin
 x_inicio, y_inicio = 0, 0
-x_fin, y_fin = 3, 1
+x_fin, y_fin = 1, 1
 color_linea = 'black'
 
 # Llamamos a nuestra función personalizada de Bresenham
