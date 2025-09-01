@@ -104,49 +104,33 @@ def draw_line(xf, yf):
 # -----------
 
 clear()
-draw_line(11, 0)
+draw_line(7, 0)
 mem_refresh()
 
 clear()
-draw_line(11, 1)
+draw_line(7, 1)
 mem_refresh()
 
 clear()
-draw_line(11, 2)
+draw_line(7, 2)
 mem_refresh()
 
 clear()
-draw_line(11, 3)
+draw_line(7, 3)
 mem_refresh()
 
 clear()
-draw_line(11, 4)
+draw_line(7, 4)
 mem_refresh()
 
 clear()
-draw_line(11, 5)
+draw_line(7, 5)
 mem_refresh()
 
 clear()
-draw_line(11, 6)
+draw_line(7, 6)
 mem_refresh()
 
 clear()
-draw_line(11, 7)
-mem_refresh()
-
-clear()
-draw_line(11, 8)
-mem_refresh()
-
-clear()
-draw_line(11, 9)
-mem_refresh()
-
-clear()
-draw_line(11, 10)
-mem_refresh()
-
-clear()
-draw_line(11, 11)
+draw_line(7, 7)
 mem_refresh()
