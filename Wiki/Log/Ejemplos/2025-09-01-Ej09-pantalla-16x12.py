@@ -19,19 +19,19 @@ def mem_refresh():
 
     # -- Imprimir la memoria en la consola
     print()
-    print('  ┌' + '──' * (SIZE_X-1) + '──┐')
+    print('  ┌' + '──' * (SIZE_X) + '──┐')
     for y, fila in enumerate(reversed(mem)):
 
         # -- Inicio de la fila
-        print(f'{SIZE_Y-(y+1):02}│', end='')
+        print(f'{SIZE_Y-(y+1):02}│ ', end='')
 
         # -- Imprimir la fila
         for car in fila:
             print(f"{car}", end='')
 
         # -- final de fila
-        print('│')
-    print('  └' + '──' * (SIZE_X-1) + '──┘')
+        print(' │')
+    print('  └' + '──' * (SIZE_X) + '──┘')
 
     # -- Obtener la lista de coordenadas x
     # -- Primero el digito de mayor peso
@@ -40,14 +40,14 @@ def mem_refresh():
              for i in range(SIZE_X)]
 
     dig10 = ''.join(dig10)
-    print('    ' + dig10 + ' ')
+    print('     ' + dig10 + ' ')
 
     # -- Ahora las unidades
     dig1 = ['  ' if i // 10 == 0 else f'{i % 10} ' for i in range(SIZE_X)]
 
     # -- convertirla a cadena
     dig1 = ''.join(dig1)
-    print('    ' + dig1 + ' ')
+    print('     ' + dig1 + ' ')
     print()
 
 
