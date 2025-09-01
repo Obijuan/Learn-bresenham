@@ -122,4 +122,3 @@ mem_refresh()
 clear()
 draw_line(4, 4)
 mem_refresh()
-
