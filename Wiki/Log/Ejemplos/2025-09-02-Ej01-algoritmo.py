@@ -116,5 +116,5 @@ def draw_line(xf, yf):
 # -----------
 
 clear()
-draw_line(11, 7)
+draw_line(15, 11)
 mem_refresh()
