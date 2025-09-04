@@ -144,7 +144,7 @@ def bresenham_gen_c1(x0, y0, xf, yf):
             if dy > dx:
                 # -- Segundo octante
 
-                # -- Obtener el punto de deshacer la
+                # -- Obtener el punto y deshacer la
                 # -- transposicion para que este en el segundo
                 # -- octante (ya que se habia calcula para el primero)
                 y, x = next(pixel)
@@ -319,4 +319,12 @@ mem_refresh()
 
 clear()
 draw_line(cx, cy, cx+3, cy-0)
+mem_refresh()
+
+clear()
+draw_line(cx, cy, cx+3, cy-0)
+mem_refresh()
+
+clear()
+draw_line(1, 2, 2, 4)
 mem_refresh()
