@@ -1,0 +1,287 @@
+import time
+
+# -----------------------
+# -- CONSTANTES
+# -----------------------
+# -- Tamaño de la memoria
+SIZE_X = 15
+SIZE_Y = 15
+
+# ------------------------
+# -- MEMORIA
+# ------------------------
+# -- Esta es la memoria de pantalla, con tamaño fijo
+mem = [[' ' for _ in range(SIZE_X)] for _ in range(SIZE_Y)]
+
+
+# ------------------------------------------------------------
+# -- Refresco: Dibujar la memoria de pantalla en la consola
+# ------------------------------------------------------------
+def mem_refresh():
+
+    # -- Imprimir la memoria en la consola
+    print()
+    print('  ┌' + '──' * (SIZE_X) + '──┐')
+    for y, fila in enumerate(reversed(mem)):
+
+        # -- Inicio de la fila
+        print(f'{SIZE_Y-(y+1):02}│ ', end='')
+
+        # -- Imprimir la fila
+        for car in fila:
+            print(f"{car}", end='')
+
+        # -- final de fila
+        print(' │')
+    print('  └' + '──' * (SIZE_X) + '──┘')
+
+    # -- Obtener la lista de coordenadas x
+    # -- Primero el digito de mayor peso
+    # dig10 = [f'{i // 10} ' for i in range(SIZE_X)]
+    dig10 = [f'{i % 10} ' if i // 10 == 0 else f'{i // 10} '
+             for i in range(SIZE_X)]
+
+    dig10 = ''.join(dig10)
+    print('     ' + dig10 + ' ')
+
+    # -- Ahora las unidades
+    dig1 = ['  ' if i // 10 == 0 else f'{i % 10} ' for i in range(SIZE_X)]
+
+    # -- convertirla a cadena
+    dig1 = ''.join(dig1)
+    print('     ' + dig1 + ' ')
+    print()
+
+
+# -----------------------------------------
+# -- Dibujar un punto en la pantalla
+# -----------------------------------------
+def plot(x: int, y: int):
+    mem[y][x] = '🟢'
+    # '██'
+    # '●'
+    # '•'
+    # '⭕'
+    # '█'
+
+
+# -----------------------------------------
+# -- Borrar la pantalla
+# -----------------------------------------
+def clear():
+    for y, line in enumerate(mem):
+        for x, _ in enumerate(line):
+            mem[y][x] = '⚫'
+            # '  '
+
+
+# -----------------------------------------
+# - Dibujar una linea entre dos puntos
+# - La linea puede tener cualquier orientacion
+# - Todos los valores de entrada deben cumplir
+# - que sean >= 0  (no admite numeros negativos)
+# - porque la pantalla solo tiene coordenadas positivas
+# -----------------------------------------
+def draw_line(x0, y0, xf, yf):
+
+    dx = xf - x0
+    dy = yf - y0
+
+    if dx >= 0 and dy >= 0:
+        # -- Primer cuadrante
+        pixel = bresenham_gen_c1(x0, y0, xf, yf)
+
+    elif dx >= 0 and dy <= 0:
+        # -- Cuarto cuadrante
+        pixel = bresenham_gen_c1(x0, -y0, xf, -yf)
+
+    elif dx <= 0 and dy >= 0:
+        # -- Segundo cuadrante
+        pixel = bresenham_gen_c1(-x0, y0, -xf, yf)
+
+    else:
+        # -- Tercer cuadrante
+        pixel = bresenham_gen_c1(-x0, -y0, -xf, -yf)
+
+    while True:
+        try:
+            x, y = next(pixel)
+        except StopIteration:
+            return
+
+        if dx >= 0 and dy >= 0:
+            plot(x, y)
+        elif dx >= 0 and dy <= 0:
+            plot(x, -y)
+        elif dx <= 0 and dy >= 0:
+            plot(-x, y)
+        else:
+            plot(-x, -y)
+
+
+# ----------------------------------------------
+# - Calcula el siguiente punto de la linea
+# - La linea tiene que estar en el PRIMER CUADRANTE
+# --------------------------------------------------
+def bresenham_gen_c1(x0, y0, xf, yf):
+
+    dx = xf - x0
+    dy = yf - y0
+
+    # -- Crear el generador Basico, segun el caso
+    if dy > dx:
+        # -- Segundo octante
+        # -- Se transpone la linea para que este en el
+        # -- primer octante
+        pixel = bresenham_gen_basic(y0, x0, yf, xf)
+    else:
+        # -- Primer octante
+        # -- Se llama directamente al algoritmo basico
+        # -- no se nececista hacer ninguna transformacion
+        pixel = bresenham_gen_basic(x0, y0, xf, yf)
+
+    while True:
+        try:
+            # -- Obtener el punt
+            if dy > dx:
+                # -- Segundo octante
+
+                # -- Obtener el punto y deshacer la
+                # -- transposicion para que este en el segundo
+                # -- octante (ya que se habia calcula para el primero)
+                y, x = next(pixel)
+
+            else:
+                # -- Primer octante
+                # -- No hay que aplicar ninguna transformacion al punto
+                # -- obtenido
+                x, y = next(pixel)
+        except StopIteration:
+            return
+
+        # -- Devolver el punto calculado
+        yield (x, y)
+
+
+# ----------------------------------------------------
+# -- Calcula el siguiente punto de la linea
+# -- La linea tiene que estar en el primer octante
+# --
+# -- Devuelve: El punto calculado
+# -----------------------------------------------------
+def bresenham_gen_basic(x0, y0, xf, yf):
+
+    # -- Valor inicial para y
+    y = y0
+
+    # -- Distancia en x
+    dx = xf - x0
+
+    # -- Distancia en y
+    dy = yf - y0
+
+    # -- Valor inicial de D, para decidir que pixel
+    # -- encendemos en la columna siguiente: el de arriba
+    # -- o el de abajo
+    D = dx - 2*dy
+
+    # -- Recorrer todos los pixeles
+    for x in range(x0, xf):
+
+        # -- Dibujar pixel actual
+        yield (x, y)
+
+        # -- El pixel está por debajo de la linea --> la línea
+        # -- está hacia arriba:  Incrementamos 'y' para ir hacia ella
+        # -- y calculamos el nuevo D
+        if D < 0:  # -- Caso Inclinado
+            y = y + 1
+            D = D + 2*dx - 2*dy
+
+        else:
+            # -- Caso recto
+            # -- La y NO se incrementa
+            # -- Calcular el siguiente D
+            D = D - 2*dy
+
+    # -- Dibujar el punto final
+    yield (xf, yf)
+
+
+# -------------------------------------------------------
+# -- Dibujar una linea desde (x0,y0) hasta (x1, y1)
+# -- Algoritmo de bresenham optimizado
+# -- valido para todos los cuadrantes
+# -------------------------------------------------------
+def draw_line2(x0, y0, x1, y1):
+
+    # -- Distancia en x
+    dx = abs(x1 - x0)
+
+    # -- Incremento en eje x
+    sx = 1 if x0 < x1 else -1
+
+    # -- Distancia en y
+    dy = -abs(y1 - y0)
+
+    # -- Incremento en eje y
+    sy = 1 if y0 < y1 else -1
+
+    # -- Error: Distancia del siguiente pixel a la linea
+    error = dx + dy
+
+    while True:
+        plot(x0, y0)
+        print("\x1b[2J\x1b[H")
+        mem_refresh()
+
+        e2 = 2 * error
+
+        if e2 >= dy:
+            if x0 == x1:
+                break
+            error = error + dy
+            x0 = x0 + sx
+
+        if e2 <= dx:
+            if y0 == y1:
+                break
+            error = error + dx
+            y0 = y0 + sy
+
+
+# -----------
+# -- MAIN
+# -----------
+print("\x1b[2J\x1b[H")
+clear()
+draw_line2(0, 0, 14, 2)
+mem_refresh()
+
+while True:
+    pass
+
+# ---- Animacion
+X = 0
+Y = 1
+incs = [(3, 0), (3, 1), (3, 2), (3, 3),
+        (2, 3), (1, 3), (0, 3),
+        (-1, 3), (-2, 3), (-3, 3),
+        (-3, 2), (-3, 1), (-3, 0),
+        (-3, -1), (-3, -2), (-3, -3),
+        (-2, -3), (-1, -3), (-0, -3),
+        (1, -3), (2, -3), (3, -3),
+        (3, -2), (3, -1)]
+
+# -- Centro de la pantalla
+cx, cy = 7, 7
+
+while True:
+    for inc in incs:
+        print("\x1b[2J\x1b[H")
+        clear()
+        draw_line2(cx, cy, cx+inc[X], cy+inc[Y])
+        mem_refresh()
+
+        # -- Esperar un segundo
+        time.sleep(0.2)
